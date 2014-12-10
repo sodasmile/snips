@@ -1,0 +1,11 @@
+#!/bin/sh
+# (replace "find ." with "find ./<path>" below, to work with only specific paths)
+
+# (these lines are really all one line, on multiple lines for clarity)
+# ...find symlinks which do not dereference to directories...
+find . -type l -exec test '!' -d {} ';' -print -exec sh -c \
+    'git rm --cached "$1"; diff -au /dev/null "$1" | git apply --cached -p1 -' \
+    "process_links_to_nondir" {} ';'
+
+# the end
+
