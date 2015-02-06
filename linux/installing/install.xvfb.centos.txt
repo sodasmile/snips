@@ -1,0 +1,10 @@
+## Xvfb on CentOS for running headless JavaFX builds:
+sudo yum install -y xorg-x11-server-Xvfb
+## Error: JavaFX detected no fonts! Please refer to release notes for proper font configuration:
+sudo yum install -y xorg-x11-fonts*
+## Either:
+# xvfb-run mvn clean install
+## Or:
+# Xvfb :1 -screen 0 1024x768x24 &
+# export DISPLAY=":1"
+# mvn clean install
