@@ -1,0 +1,53 @@
+# Enter wpa_config home
+cd /etc/wpa_supplicant 
+# Create config
+vi example.conf
+# Fill config with initial stuff
+echo -ne "ctrl_interface=/run/wpa_supplicant\nupdate_config=1\n" > /etc/wpa_supplicant/example.conf
+# Admire your work
+cat /etc/wpa_supplicant/example.conf
+# Figure out that your network is @ wlan0
+ip link
+# listing supported drivers
+wpa_supplicant -h
+# ... says it doesn't supports desired driver rtl8192cu, probably falling back to 
+#     wext in the following command
+# Start wpa_supplicant in the background, with realtek driver and wext as fallback, 
+#     for your wlan interface with the specified config file
+wpa_supplicant -B -Drtl8192cu,wext -i wlan0 -c /etc/wpa_supplicant/example.conf 
+# Interactive program to configure wpa
+wpa_cli
+  # in wpa_cli mode:
+  > scan
+  # OK
+  # ...
+  # CTRL-EVENT-SCAN-RESULTS
+  # WPS-AP-AVAILABLE
+  # ...
+  > add_network
+  # 0
+  > set_network 0 ssid "mysid"
+  # OK
+  > set_network 0 psk "verysecret"
+  # OK
+  > enable network 0
+  # OK
+  # CTRL-EVENT ...
+  # ... 
+  # CTRL-EVENT-CONNECTED - Connection to ... completed ...
+  > save_config
+  #OK
+quit
+# End of wpa_cli
+# Start dhcpd client for wlan0
+dhcpcd wlan0
+# ... see that you get an ip address
+# Fix the config file
+cd /etc/wpa_supplicant
+mv example.conf wpa_supplicant.conf
+# Restart wpa_supplicant with new config file
+killall wpa_supplicant
+wpa_supplicant -B -Drtl8192cu,wext -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf
+# Reboot to see that the things you done worked
+reboot
+
