@@ -7,3 +7,5 @@
         stat = status
         co = checkout
 
+[push]
+	default = simple
