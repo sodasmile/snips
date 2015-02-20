@@ -1,0 +1,101 @@
+Expanding filesystem on runeaudio/archlinux
+The live-resize filesystem method did not work very well
+The offline-resize filesystem worked better
+The offline-resize filesystem procedure goes something like this
+
+* Power off the raspberry pi
+* Pick out the SD-card
+* Stick the SD-card into another linux computer using a usb sd-card reader. For instance one of your other raspberry pi's.
+* Figure out where the card is mounted, for instance:
+
+$ ls -l /dev/disk/by-id
+
+It will show you what is what. For instance you will find that your card is device /dev/sda, and there will be for instance two partitions /dev/sda1 and /dev/sda2
+
+Now you wanna look at the physicals on the card:
++--------------------------------------------------+
+$ sudo parted /dev/sda
+(parted) unit MB
+(parted) print                                                            
+Model: SD SL08G (sd/mmc)
+Disk /dev/mmcblk0: 7948MB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End     Size    Type      File system  Flags
+ 1      1.05MB  95.4MB  94.4MB  primary   fat16        lba
+ 2      95.4MB  1878MB  1783MB  extended
+ 5      96.5MB  1878MB  1782MB  logical   ext4
++--------------------------------------------------+
+This means you have a card of the size 8Gig, but only using 2 of them.
+
+You also wanna print this using sectors units:
++--------------------------------------------------+
+$ sudo parted /dev/sda unit s p
+Model: SD SL08G (sd/mmc)
+Disk /dev/sda: 15523840s
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start    End       Size      Type      File system  Flags
+ 1      2048s    186367s   184320s   primary   fat16        lba
+ 2      186368s  3667967s  3481600s  extended
+ 5      188416s  3667967s  3479552s  logical   ext4
++--------------------------------------------------+
+
+You wanna pay really good attention to this: You don't touch partition number 1.
+
+You wanna do the chaning using fdisk (or parted, if you wanna be on your own).
+$ sudo fdisk /dev/sda
+
+You wanna remove the extended partition, 
+and you wanna remove the logical partition, the number 5.
+
+d, 5 (delete partition 5, since this is inside partition 2)
+d, 2 (delete partition 2, since this holds and restricts partition 5)
+
+Now you wanna create new partitions
+n, 2, [enter], [enter] (meaning you wanna create new partition, type 2, meaning extended, and verify that the suggested start sector matches the old starting sector of partition 2, and see that new ending size is for instance something like 4 times the size the old size)
+n, 5, [enter], [enter] (meaning you wanna create new partition, type 5, meaning logical, and verify that the suggested start sector matches the old starting sector of partition 5, and see that the new ending size is for instance something like 4 times the size the old size)
+
+Then you might wanna print the new partition table. Note: Nothing have really been changed yet, so if you're not satisfied, you wanna just quit the fdisk and start over again - or not.
+
++--------------------------------------------------+
+Command (m for help): print
+
+Disk /dev/mmcblk0: 7.4 GiB, 7948206080 bytes, 15523840 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x417ee54b
+
+Device         Boot  Start      End  Sectors  Size Id Type
+/dev/mmcblk0p1        2048   186367   184320   90M  c W95 FAT32 (LBA)
+/dev/mmcblk0p2      186368 15523839 15337472  7.3G  5 Extended
+/dev/mmcblk0p5      188416 15523839 15335424  7.3G 83 Linux
++--------------------------------------------------+
+
+When you see something like the stuff above, and you feel very satisfied with your work, you press
+
+w
+
+to write the changes.
+
+Then you wanna do:
+
+$ sudo e2fsck -f /dev/sda5
+
+Meaning you wanna run some kind of filecheck on partition 5 of your usb (which is really your sd-card) drive.
+
+You wanna finish of this fine session by:
+
+$ sudo resize2fs /dev/sda5
+
+This won't take long, but it will make sure your logical partition number 5 utilizes all available space for it to utilize.
+
+That's about it. You should be able to boot up your raspberry from this card again.
+
+And remember. If you don't is able to boot, if you get a kernel panic or something like that, you may go through the same routine as before, just reverse the operations. Meaning, recreate extended partition with original numbers, and logical partition with original numbers.
