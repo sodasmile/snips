@@ -1,0 +1,8 @@
+# Hostname is configured in /etc/hostname
+cat /etc/hostname
+# => old-hostname
+# Hostname is configured using 
+hostnamectl set-hostname new-hostname
+# New hostname is now stored in /etc/hostname
+cat /etc/hostname
+# => new-hostname
