@@ -1,0 +1,16 @@
+ GROWL
+======
+
+# To register (and show a notif):
+# path       exec      app-id     register types                         a type    empty message
+%HOME%\bin\growlnotify /a:"mvn2" /r:"starting","running","done","failed" /n:"done" ""
+
+To just show a notification
+# path       exec      app-id   a type    title                  message
+%HOME%\bin\growlnotify /a:"mvn" /n:"done" /t:"Maven bygg ferdig" "Maven ferdigbygget"
+
+
+mvn clean install && %HOME%\bin\growlnotify /a:"mvn" /n:"done" /c:"coal" /t:"Maven bygg ferdig" "Big success\nNow go commit." || %HOME%\bin\growlnotify /a:"mvn" /n:"done" /c:"coal" /t:"Maven bygg feilet" "Build FAILED!!!\nBack to the drawingboard..."
+
+mvn clean install -o && growlnotify /a:"mvn" /n:"done" /c:"coal" /t:"Maven bygg ferdig" "Big success\nNow go commit." || growlnotify /a:"mvn" /n:"failed" /c:"coal" /t:"Maven bygg feilet" "Build FAILED\nBack to the drawingboard..."
+
