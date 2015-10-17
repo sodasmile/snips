@@ -16,8 +16,6 @@ end
 expression = ARGV[0]
 url = ARGV[1]
 
-puts "Searching #{url} using #{expression}"
-
 responseBody = Net::HTTP.get_response(URI.parse(url)).body
 
 # extract event information
