@@ -23,7 +23,7 @@ if [ ! -r "${IMAGEFILE}" ]; then
 fi
 
 echo diskutil unmountDisk ${TARGET}
-diskutil unmountDisk ${TARGET}
+sudo diskutil unmountDisk ${TARGET}
 
 echo "dd'ing ${IMAGEFILE} to ${TARGET}, show a little patience"
 echo sudo dd bs=1m if="${IMAGEFILE}" of="${TARGET}"
