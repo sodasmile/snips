@@ -3,7 +3,7 @@
 var https = require('https');
 var fs = require('fs');
 
-var settings = JSON.parse(fs.readFileSync('settings.json'));
+var settings = JSON.parse(fs.readFileSync(__dirname + '/settings.json'));
 
 var MILLIS_IN_SECOND = 1000;
 
@@ -35,7 +35,7 @@ var req = https.request(options, function(res) {
         var athlete = activity.athlete;
         var timestamp = Date.parse(activity.start_date);
         if (settings.athleteids.indexOf(athlete.id) != -1 && !activity.has_kudoed) {
-           console.log("Missing kudos on activity: https://www.strava.com/activities/" + activity.id);
+           console.log("Missing kudos on " + athlete.firstname + "'s activity: https://www.strava.com/activities/" + activity.id);
         }
         oldest = Math.min(oldest, timestamp);       
     }
