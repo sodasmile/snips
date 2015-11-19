@@ -2,7 +2,7 @@
 
 var https = require('https');
 var fs = require('fs');
-//var xmpp = require(__dirname + '/xmpp')
+var xmpp = require(__dirname + '/xmpp')
 
 var settings = JSON.parse(fs.readFileSync(__dirname + '/settings.json'));
 
@@ -19,8 +19,6 @@ var options = {
      "Authorization": "Bearer " + settings.strava_api_key
     }  
 };
-
-//xmpp.sendMessage(settings.notification_receiver, 'hei')
 
 var req = https.request(options, function(res) {
 
@@ -41,8 +39,8 @@ var req = https.request(options, function(res) {
            var started = new Date(timestamp);
            var message = "Missing kudos on " + athlete.firstname + "s activity: https://www.strava.com/activities/" + activity.id + " started " + started;
            console.log(message);
-           //xmpp.sendMessage(settings.notification_receiver, message)
-        }
+           xmpp.sendMessage(settings.notification_receiver, message)
+        } 
         oldest = Math.min(oldest, timestamp);       
     }
 
