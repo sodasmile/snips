@@ -7,7 +7,7 @@ var fs = require('fs')
 var settings = JSON.parse(fs.readFileSync(__dirname + '/xmpp.settings.json'))
 
 module.exports = {
-   sendMelding: function(receiver, melding) {
+   sendMessage: function(receiver, melding) {
 
        var client = new Client({
            jid: settings.jid,
