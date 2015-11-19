@@ -42,7 +42,7 @@ module.exports = {
        })
 
        client.on('error', function(error) {
-           console.erorr(error)
+           console.error(error)
            process.exit(1)
        })
    }
