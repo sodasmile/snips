@@ -1,5 +1,6 @@
 {
  "strava_api_key": "your_strava_developer_key",
  "athleteids": [1234,4321],
- "notification_receiver": "notificationreceiver@gmail.com"
+ "notification_receiver": "notificationreceiver@gmail.com",
+ "min_moving_time": 60
 }

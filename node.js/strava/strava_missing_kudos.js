@@ -35,7 +35,10 @@ var req = https.request(options, function(res) {
         var activity = pars[i];
         var athlete = activity.athlete;
         var timestamp = Date.parse(activity.start_date);
-        if (settings.athleteids.indexOf(athlete.id) != -1 && !activity.has_kudoed) {
+        // console.log("Activity: " + athlete.firstname + " " + athlete.lastname + " Duration: " + activity.moving_time + "s, " + (activity.moving_time / 60) + "min")
+        if (settings.athleteids.indexOf(athlete.id) != -1 
+              && !activity.has_kudoed 
+              && (activity.moving_time / 60 ) >= settings.min_moving_time) {
            var started = new Date(timestamp);
            var message = "Missing kudos on " + athlete.firstname + "s activity: https://www.strava.com/activities/" + activity.id + " started " + started;
            console.log(message);
