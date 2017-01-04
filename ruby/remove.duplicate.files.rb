@@ -1,5 +1,11 @@
 #!/usr/bin/env ruby
 
+## USAGE: ruby remove.duplicate.files
+#
+## Scanning all files in current folder (and subfolders?)
+## and based on the files md5 sum, deletes duplicates.
+#
+
 require 'digest/md5'
  
 hash = {}
